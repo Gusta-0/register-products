@@ -1,6 +1,4 @@
 
-
-```md
 # 📦 Cadastro de Produtos – CRUD
 
 Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, seguindo boas práticas de arquitetura, separação de responsabilidades, DTOs e documentação com **Swagger/OpenAPI**.

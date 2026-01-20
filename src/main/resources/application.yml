@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 
 ---
 
@@ -10,7 +10,7 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:h2:mem:db_team_management
+    url: jdbc:h2:mem:db_cadastro-produtos
     driver-class-name: org.h2.Driver
     username: sa
     password:

@@ -6,9 +6,9 @@ import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
+// Serviço para gerenciar operações relacionadas a produtos
 @Service
 public class ProductService {
 
@@ -47,7 +47,7 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
         Product updated = Product.builder()
-                .id(existing.getId()) // mantém o ID
+                .id(existing.getId())
                 .idProduct(request.idProduct())
                 .name(request.name())
                 .description(request.description())

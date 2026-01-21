@@ -69,8 +69,28 @@ public interface ProductAPI {
             }
     )
     @GetMapping("/{id}")
-    ResponseEntity<ProductResponse> findById(
+    ResponseEntity<ProductResponse> findByName(
             @PathVariable Long id
+    );
+
+    @Operation(
+            summary = "Buscar produto pelo nome",
+            description = "Retorna os dados de um produto específico pelo seu nome",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Produto encontrado",
+                            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Produto não encontrado"
+                    )
+            }
+    )
+    @GetMapping("/{id}")
+    ResponseEntity<ProductResponse> findByName(
+            @PathVariable String name
     );
 
     @Operation(

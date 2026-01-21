@@ -21,7 +21,7 @@ public class ProductService {
     @Transactional
     public ProductResponse saveProduct(ProductRequest productRequest) {
         if (productRequest == null) {
-            throw new IllegalArgumentException("productRequest não pode ser nulo");
+            throw new IllegalArgumentException("O Produto não pode ser nulo");
         }
 
         var product = productRequest.toProduct();
@@ -38,6 +38,12 @@ public class ProductService {
 
     public ProductResponse findById(Long id) {
         Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        return new ProductResponse(product);
+    }
+
+    public ProductResponse findByName(String name) {
+        Product product = productRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         return new ProductResponse(product);
     }

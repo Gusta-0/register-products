@@ -11,7 +11,7 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 - 🌱 Spring Boot
 - 📦 Spring Data JPA
 - 🐘 Hibernate
-- 🗄️ Banco de dados (H2 / PostgreSQL / MySQL)
+- 🗄️ Banco de dados (H2)
 - 📄 Swagger (Springdoc OpenAPI)
 - 🧪 Maven
 - 🔧 Git & GitHub

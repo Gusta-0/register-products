@@ -30,17 +30,17 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<ProductResponse> findByName(@PathVariable String name) {
         return ResponseEntity.ok(productService.findByName(name));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
             @RequestBody ProductRequest request
@@ -48,7 +48,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();

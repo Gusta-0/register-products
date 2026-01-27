@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ProductRequest(
-        @NotNull(message = "O ID não pode ser nulo") Long idProduct,
-
         @NotBlank(message = "Nome é obrigatório")
         @Size(min = 8, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
         String name,
@@ -19,7 +17,6 @@ public record ProductRequest(
 {
     public ProductRequest(Product product) {
         this(
-                product.getIdProduct(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
@@ -29,7 +26,6 @@ public record ProductRequest(
 
     public Product toProduct() {
         return Product.builder()
-                .idProduct(this.idProduct)
                 .name(this.name)
                 .description(this.description)
                 .price(this.price)

@@ -1,6 +1,4 @@
 
-
-```md
 # 📦 Cadastro de Produtos – CRUD
 
 Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, seguindo boas práticas de arquitetura, separação de responsabilidades, DTOs e documentação com **Swagger/OpenAPI**.
@@ -13,7 +11,7 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 - 🌱 Spring Boot
 - 📦 Spring Data JPA
 - 🐘 Hibernate
-- 🗄️ Banco de dados (H2 / PostgreSQL / MySQL)
+- 🗄️ Banco de dados (H2)
 - 📄 Swagger (Springdoc OpenAPI)
 - 🧪 Maven
 - 🔧 Git & GitHub

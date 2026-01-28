@@ -7,11 +7,13 @@ import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import com.gustavo.cadastro_produtos.exceptions.BusinessException;
 import com.gustavo.cadastro_produtos.exceptions.ProductNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Primary
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;

@@ -2,6 +2,7 @@ package com.gustavo.cadastro_produtos.core.controller;
 
 import com.gustavo.cadastro_produtos.core.service.ProductService;
 import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
+import com.gustavo.cadastro_produtos.dto.request.ProductUpdateRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+//    Dependência invertida (princípio da Inversão de Dependência do SOLID)
 
     private final ProductService productService;
 
@@ -31,21 +33,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.findById(id));
-    }
-
-    @GetMapping("/{name}")
-    public ResponseEntity<ProductResponse> findByName(@PathVariable String name) {
-        return ResponseEntity.ok(productService.findByName(name));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @Valid
             @PathVariable Long id,
-            @RequestBody ProductRequest request
+            @RequestBody ProductUpdateRequest request
     ) {
         return ResponseEntity.ok(productService.update(id, request));
     }

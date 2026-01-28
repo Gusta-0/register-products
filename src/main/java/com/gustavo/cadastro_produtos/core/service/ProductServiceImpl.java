@@ -3,6 +3,7 @@ package com.gustavo.cadastro_produtos.core.service;
 import com.gustavo.cadastro_produtos.core.entity.Product;
 import com.gustavo.cadastro_produtos.core.repository.ProductRepository;
 import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
+import com.gustavo.cadastro_produtos.dto.request.ProductUpdateRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import com.gustavo.cadastro_produtos.exceptions.BusinessException;
 import com.gustavo.cadastro_produtos.exceptions.ProductNotFoundException;
@@ -40,35 +41,15 @@ public class ProductServiceImpl implements ProductService{
                 .toList();
     }
 
-    public ProductResponse findById(Long id) {
+    public ProductResponse update(Long id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(id));
-        return new ProductResponse(product);
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        request.applyUpdates(product);
+
+        return new ProductResponse(productRepository.save(product));
     }
 
-    public ProductResponse findByName(String name) {
-        Product product = productRepository.findByName(name)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(name));
-        return new ProductResponse(product);
-    }
-
-    public ProductResponse update(Long id, ProductRequest request) {
-        Product existing = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(id));
-
-        Product updated = Product.builder()
-                .id(existing.getId())
-                .name(request.name())
-                .description(request.description())
-                .price(request.price())
-                .quantity(request.quantity())
-                .build();
-
-        return new ProductResponse(productRepository.save(updated));
-    }
 
     public void delete(Long id) {
         if (!productRepository.existsById(id)) {

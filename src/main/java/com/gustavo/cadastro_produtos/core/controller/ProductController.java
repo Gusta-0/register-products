@@ -2,6 +2,7 @@ package com.gustavo.cadastro_produtos.core.controller;
 
 import com.gustavo.cadastro_produtos.core.service.ProductService;
 import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
+import com.gustavo.cadastro_produtos.dto.request.ProductUpdateRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,45 +15,41 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService productService;
+  private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+  public ProductController(ProductService productService) {
+    this.productService = productService;
+  }
 
-    @PostMapping
-    public ResponseEntity<ProductResponse> save(@Valid @RequestBody ProductRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.saveProduct(request));
-    }
+  @PostMapping
+  public ResponseEntity<ProductResponse> save(@Valid @RequestBody ProductRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+      .body(productService.saveProduct(request));
+  }
 
-    @GetMapping
-    public ResponseEntity<List<ProductResponse>> findAll() {
-        return ResponseEntity.ok(productService.findAll());
-    }
+  @GetMapping
+  public ResponseEntity<List<ProductResponse>> findAll() {
+    return ResponseEntity.ok(productService.findAll());
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.findById(id));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
+    ProductResponse response = productService.findById(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<ProductResponse> findByName(@PathVariable String name) {
-        return ResponseEntity.ok(productService.findByName(name));
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<ProductResponse> update(
+    @Valid
+    @PathVariable Long id,
+    @RequestBody ProductUpdateRequest request
+  ) {
+    return ResponseEntity.ok(productService.update(id, request));
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> update(
-            @Valid
-            @PathVariable Long id,
-            @RequestBody ProductRequest request
-    ) {
-        return ResponseEntity.ok(productService.update(id, request));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    productService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -14,37 +14,42 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-//    Dependência invertida (princípio da Inversão de Dependência do SOLID)
 
-    private final ProductService productService;
+  private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+  public ProductController(ProductService productService) {
+    this.productService = productService;
+  }
 
-    @PostMapping
-    public ResponseEntity<ProductResponse> save(@Valid @RequestBody ProductRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.saveProduct(request));
-    }
+  @PostMapping
+  public ResponseEntity<ProductResponse> save(@Valid @RequestBody ProductRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+      .body(productService.saveProduct(request));
+  }
 
-    @GetMapping
-    public ResponseEntity<List<ProductResponse>> findAll() {
-        return ResponseEntity.ok(productService.findAll());
-    }
+  @GetMapping
+  public ResponseEntity<List<ProductResponse>> findAll() {
+    return ResponseEntity.ok(productService.findAll());
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> update(
-            @Valid
-            @PathVariable Long id,
-            @RequestBody ProductUpdateRequest request
-    ) {
-        return ResponseEntity.ok(productService.update(id, request));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
+    ProductResponse response = productService.findById(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<ProductResponse> update(
+    @Valid
+    @PathVariable Long id,
+    @RequestBody ProductUpdateRequest request
+  ) {
+    return ResponseEntity.ok(productService.update(id, request));
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    productService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }

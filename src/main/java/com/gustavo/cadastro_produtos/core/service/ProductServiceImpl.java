@@ -15,46 +15,53 @@ import java.util.List;
 
 @Service
 @Primary
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+  private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+  public ProductServiceImpl(ProductRepository productRepository) {
+    this.productRepository = productRepository;
+  }
+
+  @Transactional
+  public ProductResponse saveProduct(ProductRequest request) {
+    if (request == null) {
+      throw new BusinessException("O Produto não pode ser nulo");
     }
 
-    @Transactional
-    public ProductResponse saveProduct(ProductRequest request) {
-        if (request == null) {
-            throw new BusinessException("O Produto não pode ser nulo");
-        }
+    Product product = request.toProduct();
+    Product saved = productRepository.save(product);
+    return new ProductResponse(saved);
+  }
 
-        Product product = request.toProduct();
-        Product saved = productRepository.save(product);
-        return new ProductResponse(saved);
+  public List<ProductResponse> findAll() {
+    return productRepository.findAll()
+      .stream()
+      .map(ProductResponse::new)
+      .toList();
+  }
+
+  @Override
+  public ProductResponse findById(Long id) {
+    Product product = productRepository.findById(id)
+      .orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com id: " + id));
+
+    return new ProductResponse(product);
+  }
+
+  public ProductResponse update(Long id, ProductUpdateRequest request) {
+    Product product = productRepository.findById(id)
+      .orElseThrow(() -> new ProductNotFoundException(id));
+
+    request.applyUpdates(product);
+
+    return new ProductResponse(productRepository.save(product));
+  }
+
+  public void delete(Long id) {
+    if (!productRepository.existsById(id)) {
+      throw new ProductNotFoundException(id);
     }
-
-    public List<ProductResponse> findAll() {
-        return productRepository.findAll()
-                .stream()
-                .map(ProductResponse::new)
-                .toList();
-    }
-
-    public ProductResponse update(Long id, ProductUpdateRequest request) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-
-        request.applyUpdates(product);
-
-        return new ProductResponse(productRepository.save(product));
-    }
-
-
-    public void delete(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ProductNotFoundException(id);
-        }
-        productRepository.deleteById(id);
-    }
+    productRepository.deleteById(id);
+  }
 }

@@ -3,7 +3,10 @@ package com.gustavo.cadastro_produtos.core.service;
 import com.gustavo.cadastro_produtos.core.entity.Product;
 import com.gustavo.cadastro_produtos.core.repository.ProductRepository;
 import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
+import com.gustavo.cadastro_produtos.dto.request.ProductUpdateRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
+import com.gustavo.cadastro_produtos.exceptions.BusinessException;
+import com.gustavo.cadastro_produtos.exceptions.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,246 +23,173 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    @InjectMocks
-    ProductService productService;
+  @InjectMocks
+  ProductServiceImpl productService;
 
-    @Mock
-    ProductRepository productRepository;
+  @Mock
+  ProductRepository productRepository;
 
-    Product product;
-    Product product2;
+  @Mock
+  ProductUpdateRequest productUpdateRequest;
 
-    @BeforeEach
-    public void setUp(){
-        product = Product.builder()
-                .id(1885858L)
-                .idProduct(85448001L)
-                .name("Produto Teste 1")
-                .description("Descrição do Produto Teste")
-                .price(100.0)
-                .build();
+  Product product;
+  Product product2;
 
-        product2 = Product.builder()
-                .id(1852582L)
-                .idProduct(1284282L)
-                .name("Produto Teste 2")
-                .description("Descrição do Produto Teste")
-                .price(200.0)
-                .build();
-    }
+  @BeforeEach
+  void setUp() {
+    product = Product.builder()
+      .id(1885858L)
+      .name("Produto Teste 1")
+      .description("Descrição do Produto Teste")
+      .price(100.0)
+      .quantity(5)
+      .build();
 
-    @Test
-    void shouldSaveProductWithSuccessfully() {
-        ProductRequest productRequest = Mockito.mock(ProductRequest.class);
+    product2 = Product.builder()
+      .id(1852582L)
+      .name("Produto Teste 2")
+      .description("Descrição do Produto Teste")
+      .price(200.0)
+      .quantity(10)
+      .build();
+  }
 
-        Mockito.when(productRequest.toProduct())
-                .thenReturn(product);
+  @Test
+  void shouldSaveProductWithSuccessfully() {
+    ProductRequest productRequest = Mockito.mock(ProductRequest.class);
 
-        Mockito.when(productRepository.save(product))
-                .thenReturn(product);
+    Mockito.when(productRequest.toProduct()).thenReturn(product);
+    Mockito.when(productRepository.save(product)).thenReturn(product);
 
-        ProductResponse response = productService.saveProduct(productRequest);
+    ProductResponse response = productService.saveProduct(productRequest);
 
-        assertNotNull(response);
-        assertEquals(product.getId(), response.id());
-        assertEquals(product.getName(), response.name());
-        assertEquals(product.getPrice(), response.price());
+    assertNotNull(response);
+    assertEquals(product.getId(), response.id());
+    assertEquals(product.getName(), response.name());
+    assertEquals(product.getPrice(), response.price());
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .save(product);
-    }
+    Mockito.verify(productRepository, Mockito.times(1)).save(product);
+  }
 
-    @Test
-    void shouldThrowExceptionWhenProductRequestIsNull() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> productService.saveProduct(null)
-        );
+  @Test
+  void shouldThrowExceptionWhenProductRequestIsNull() {
+    BusinessException exception = assertThrows(
+      BusinessException.class,
+      () -> productService.saveProduct(null)
+    );
 
-        assertEquals("O Produto não pode ser nulo", exception.getMessage());
+    assertEquals("O Produto não pode ser nulo", exception.getMessage());
+    Mockito.verifyNoInteractions(productRepository);
+  }
 
-        Mockito.verifyNoInteractions(productRepository);
-    }
+  @Test
+  void shouldReturnAllProducts() {
+    List<Product> products = List.of(product, product2);
 
-    @Test
-    void shouldReturnAllProducts() {
+    Mockito.when(productRepository.findAll()).thenReturn(products);
 
-        List<Product> products = List.of(product, product2);
+    List<ProductResponse> response = productService.findAll();
 
-        Mockito.when(productRepository.findAll())
-                .thenReturn(products);
+    assertNotNull(response);
+    assertEquals(2, response.size());
+    assertEquals(product.getId(), response.get(0).id());
+    assertEquals(product2.getId(), response.get(1).id());
 
-        List<ProductResponse> response = productService.findAll();
+    Mockito.verify(productRepository, Mockito.times(1)).findAll();
+  }
 
-        assertNotNull(response);
-        assertEquals(2, response.size());
+  @Test
+  void shouldFindProductByIdSuccessfully() {
+    Long id = product.getId();
 
-        assertEquals(product.getId(), response.get(0).id());
-        assertEquals(product2.getId(), response.get(1).id());
+    Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(product));
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findAll();
-    }
+    ProductResponse response = productService.findById(id);
 
-    @Test
-    void shouldFindProductByIdSuccessfully() {
-        Long id = product.getId();
+    assertNotNull(response);
+    assertEquals(product.getId(), response.id());
+    assertEquals(product.getName(), response.name());
 
-        Mockito.when(productRepository.findById(id))
-                .thenReturn(Optional.of(product));
+    Mockito.verify(productRepository, Mockito.times(1)).findById(id);
+  }
 
-        ProductResponse response = productService.findById(id);
+  @Test
+  void shouldThrowExceptionWhenProductNotFoundById() {
+    Long id = 999L;
 
-        assertNotNull(response);
-        assertEquals(product.getId(), response.id());
-        assertEquals(product.getName(), response.name());
+    Mockito.when(productRepository.findById(id)).thenReturn(Optional.empty());
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findById(id);
-    }
+    ProductNotFoundException exception = assertThrows(
+      ProductNotFoundException.class,
+      () -> productService.findById(id)
+    );
 
-    @Test
-    void shouldThrowExceptionWhenProductNotFoundById() {
-        Long id = 999L;
+    assertTrue(exception.getMessage().contains(String.valueOf(id)));
 
-        Mockito.when(productRepository.findById(id))
-                .thenReturn(Optional.empty());
+    Mockito.verify(productRepository, Mockito.times(1)).findById(id);
+  }
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> productService.findById(id)
-        );
+  @Test
+  void shouldUpdateProductSuccessfully() {
+    Long id = product.getId();
 
-        assertEquals("Produto não encontrado", exception.getMessage());
+    Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(product));
+    Mockito.when(productRepository.save(Mockito.any(Product.class)))
+      .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findById(id);
-    }
+    ProductResponse response = productService.update(id, productUpdateRequest);
 
-    @Test
-    void shouldFindProductByNameSuccessfully() {
-        String name = product.getName();
+    assertNotNull(response);
+    assertEquals(id, response.id());
 
-        Mockito.when(productRepository.findByName(name))
-                .thenReturn(Optional.of(product));
+    Mockito.verify(productRepository, Mockito.times(1)).findById(id);
+    Mockito.verify(productUpdateRequest, Mockito.times(1)).applyUpdates(product);
+    Mockito.verify(productRepository, Mockito.times(1)).save(product);
+  }
 
-        ProductResponse response = productService.findByName(name);
+  @Test
+  void shouldThrowExceptionWhenUpdatingNonExistingProduct() {
+    Long id = 999L;
 
-        assertNotNull(response);
-        assertEquals(product.getName(), response.name());
-        assertEquals(product.getPrice(), response.price());
+    Mockito.when(productRepository.findById(id)).thenReturn(Optional.empty());
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findByName(name);
-    }
+    ProductNotFoundException exception = assertThrows(
+      ProductNotFoundException.class,
+      () -> productService.update(id, productUpdateRequest)
+    );
 
-    @Test
-    void shouldThrowExceptionWhenProductNotFoundByName() {
-        String name = "Produto Inexistente";
+    assertTrue(exception.getMessage().contains(String.valueOf(id)));
 
-        Mockito.when(productRepository.findByName(name))
-                .thenReturn(Optional.empty());
+    Mockito.verify(productRepository, Mockito.times(1)).findById(id);
+    Mockito.verify(productRepository, Mockito.never()).save(Mockito.any());
+  }
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> productService.findByName(name)
-        );
+  @Test
+  void shouldDeleteProductSuccessfully() {
+    Long id = product.getId();
 
-        assertEquals("Produto não encontrado", exception.getMessage());
+    Mockito.when(productRepository.existsById(id)).thenReturn(true);
 
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findByName(name);
-    }
+    productService.delete(id);
 
-    @Test
-    void shouldUpdateProductSuccessfully() {
+    Mockito.verify(productRepository, Mockito.times(1)).existsById(id);
+    Mockito.verify(productRepository, Mockito.times(1)).deleteById(id);
+  }
 
-        Long id = product.getId();
+  @Test
+  void shouldThrowExceptionWhenDeletingNonExistingProduct() {
+    Long id = 999L;
 
-        ProductRequest request = Mockito.mock(ProductRequest.class);
+    Mockito.when(productRepository.existsById(id)).thenReturn(false);
 
-        Mockito.when(productRepository.findById(id))
-                .thenReturn(Optional.of(product));
+    ProductNotFoundException exception = assertThrows(
+      ProductNotFoundException.class,
+      () -> productService.delete(id)
+    );
 
-        Mockito.when(request.idProduct()).thenReturn(999L);
-        Mockito.when(request.name()).thenReturn("Produto Atualizado");
-        Mockito.when(request.description()).thenReturn("Descrição Atualizada");
-        Mockito.when(request.price()).thenReturn(150.0);
-        Mockito.when(request.quantity()).thenReturn(10);
+    assertTrue(exception.getMessage().contains(String.valueOf(id)));
 
-        Mockito.when(productRepository.save(Mockito.any(Product.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        ProductResponse response = productService.update(id, request);
-
-        assertNotNull(response);
-        assertEquals(id, response.id());
-        assertEquals("Produto Atualizado", response.name());
-        assertEquals(150.0, response.price());
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findById(id);
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .save(Mockito.any(Product.class));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenUpdatingNonExistingProduct() {
-        Long id = 999L;
-        ProductRequest request = Mockito.mock(ProductRequest.class);
-
-        Mockito.when(productRepository.findById(id))
-                .thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> productService.update(id, request)
-        );
-
-        assertEquals("Produto não encontrado", exception.getMessage());
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .findById(id);
-
-        Mockito.verify(productRepository, Mockito.never())
-                .save(Mockito.any());
-    }
-
-    @Test
-    void shouldDeleteProductSuccessfully() {
-        Long id = product.getId();
-
-        Mockito.when(productRepository.existsById(id))
-                .thenReturn(true);
-
-        productService.delete(id);
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .existsById(id);
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .deleteById(id);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistingProduct() {
-        Long id = 999L;
-
-        Mockito.when(productRepository.existsById(id))
-                .thenReturn(false);
-
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> productService.delete(id)
-        );
-
-        assertEquals("Produto não encontrado", exception.getMessage());
-
-        Mockito.verify(productRepository, Mockito.times(1))
-                .existsById(id);
-
-        Mockito.verify(productRepository, Mockito.never())
-                .deleteById(Mockito.anyLong());
-    }
+    Mockito.verify(productRepository, Mockito.times(1)).existsById(id);
+    Mockito.verify(productRepository, Mockito.never()).deleteById(Mockito.anyLong());
+  }
 }

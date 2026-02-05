@@ -7,7 +7,7 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 
 ## 🚀 Tecnologias Utilizadas
 
-- ☕ Java 17+
+- ☕ Java 21+
 - 🌱 Spring Boot
 - 📦 Spring Data JPA
 - 🐘 Hibernate

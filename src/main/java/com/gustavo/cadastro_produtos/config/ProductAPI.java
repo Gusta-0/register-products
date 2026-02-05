@@ -1,12 +1,16 @@
 package com.gustavo.cadastro_produtos.config;
 
 import com.gustavo.cadastro_produtos.dto.request.ProductRequest;
+import com.gustavo.cadastro_produtos.dto.request.ProductUpdateRequest;
 import com.gustavo.cadastro_produtos.dto.response.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +40,7 @@ public interface ProductAPI {
     )
     @PostMapping
     ResponseEntity<ProductResponse> save(
-            @RequestBody ProductRequest request
+            @Valid @RequestBody ProductRequest request
     );
 
     @Operation(
@@ -51,7 +55,7 @@ public interface ProductAPI {
             }
     )
     @GetMapping
-    ResponseEntity<List<ProductResponse>> findAll();
+    ResponseEntity<Page<ProductResponse>> findAll(Pageable pageable);
 
     @Operation(
             summary = "Buscar produto por ID",
@@ -89,9 +93,9 @@ public interface ProductAPI {
             }
     )
     @PutMapping("/{id}")
-    ResponseEntity<ProductResponse> update(
+    public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
-            @RequestBody ProductRequest request
+            @Valid @RequestBody ProductUpdateRequest request
     );
 
     @Operation(

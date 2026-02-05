@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 
 public record ProductRequest(
         @NotBlank(message = "Nome é obrigatório")
-        @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
+        @Size(min = 2, max = 50, message = "Nome deve ter entre 2 e 50 caracteres")
         String name,
 
         String description,
@@ -15,7 +15,7 @@ public record ProductRequest(
         Double price,
 
         @PositiveOrZero(message = "Quantidade não pode ser negativa")
-        @NotNull(message = "A quantidade não pode ser nulo")
+        @NotNull(message = "A quantidade não pode ser nula")
         Integer quantity)
 {
     public ProductRequest(Product product) {

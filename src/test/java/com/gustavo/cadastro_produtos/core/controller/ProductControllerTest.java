@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,16 +58,26 @@ class ProductControllerTest {
 
   @Test
   void shouldReturnAllProducts() throws Exception {
-    Mockito.when(productService.findAll())
-      .thenReturn(List.of(productResponse));
+    Page<ProductResponse> page =
+            new PageImpl<>(
+                    List.of(productResponse),
+                    PageRequest.of(0, 20),
+                    1
+            );
+
+    Mockito.when(productService.findAll(Mockito.any(Pageable.class)))
+            .thenReturn(page);
 
     mockMvc.perform(get("/products"))
-      .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].id").value(1L))
-      .andExpect(jsonPath("$[0].name").value("Produto Teste"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[0].id").value(1L))
+            .andExpect(jsonPath("$.content[0].name").value("Produto Teste"))
+            .andExpect(jsonPath("$.totalElements").value(1));
 
-    Mockito.verify(productService, times(1)).findAll();
+    Mockito.verify(productService, times(1))
+            .findAll(Mockito.any(Pageable.class));
   }
+
 
   @Test
   void shouldFindProductById() throws Exception {
@@ -83,6 +97,7 @@ class ProductControllerTest {
     // JSON de update (parcial ou completo, conforme seu DTO)
     String updateJson = """
             {
+              "id": 1,
               "name": "Produto Atualizado",
               "description": "Descrição Atualizada",
               "price": 150.0,

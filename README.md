@@ -7,39 +7,48 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 
 ## 🚀 Tecnologias Utilizadas
 
-- ☕ Java 21+
-- 🌱 Spring Boot
-- 📦 Spring Data JPA
-- 🐘 Hibernate
-- 🗄️ Banco de dados (H2)
-- 📄 Swagger (Springdoc OpenAPI)
-- 🧪 Maven
-- 🔧 Git & GitHub
+* ☕ Java 21+
+* 🌱 Spring Boot
+* 📦 Spring Data JPA
+* 🐘 Hibernate
+* 🗄️ Banco de dados (H2 em memória, PostgreSQL no Azure)
+* 📄 Swagger (Springdoc OpenAPI)
+* 🧪 Gradle
+* 🔧 Git & GitHub
+* 🧪 JUnit 5 para testes unitários
 
 ---
 
 ## 📌 Funcionalidades
 
-- ✅ Cadastrar produto
-- ✅ Listar todos os produtos
-- ✅ Buscar produto por ID
-- ✅ Atualizar produto
-- ✅ Remover produto
-- ✅ Documentação automática com Swagger
+* ✅ Cadastrar produto
+* ✅ Listar todos os produtos
+* ✅ Buscar produto por ID
+* ✅ Atualizar produto
+* ✅ Remover produto
+* ✅ Documentação automática com Swagger
+
+---
 
 ## 🧱 Estrutura do Projeto
+
+* **Controller** – Responsável pelos endpoints
+* **Service** – Regras de negócio
+* **Repository** – Acesso a dados via JPA
+* **DTOs** – Objetos de transferência
+* **Tests** – Testes unitários com JUnit 5
 
 ---
 
 ## 🔗 Endpoints da API
 
-| Método | Endpoint | Descrição |
-|------|--------|----------|
-| POST | `/products` | Cadastrar produto |
-| GET | `/products` | Listar todos os produtos |
-| GET | `/products/{id}` | Buscar produto por ID |
-| PUT | `/products/{id}` | Atualizar produto |
-| DELETE | `/products/{id}` | Remover produto |
+| Método | Endpoint         | Descrição                |
+| ------ | ---------------- | ------------------------ |
+| POST   | `/products`      | Cadastrar produto        |
+| GET    | `/products`      | Listar todos os produtos |
+| GET    | `/products/{id}` | Buscar produto por ID    |
+| PUT    | `/products/{id}` | Atualizar produto        |
+| DELETE | `/products/{id}` | Remover produto          |
 
 ---
 
@@ -47,13 +56,12 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 
 ```json
 {
-  "idProduct": "PROD-001",
   "name": "Notebook",
   "description": "Notebook para uso profissional",
   "price": 3500.00,
   "quantity": 10
 }
-````
+```
 
 ---
 
@@ -62,7 +70,6 @@ Projeto de **CRUD de Cadastro de Produtos** desenvolvido com **Spring Boot**, se
 ```json
 {
   "id": 1,
-  "idProduct": "PROD-001",
   "name": "Notebook",
   "description": "Notebook para uso profissional",
   "price": 3500.00,
@@ -93,7 +100,7 @@ http://localhost:8080/swagger-ui/index.html
 ### 1️⃣ Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU_USUARIO/register-products.git
+git clone https://github.com/Gusta-0/register-products.git
 ```
 
 ### 2️⃣ Acessar a pasta do projeto
@@ -102,10 +109,16 @@ git clone https://github.com/SEU_USUARIO/register-products.git
 cd register-products
 ```
 
-### 3️⃣ Executar a aplicação
+### 3️⃣ Executar a aplicação com Gradle
 
 ```bash
-mvn spring-boot:run
+./gradlew bootRun
+```
+
+> No Windows PowerShell, use:
+
+```powershell
+gradlew.bat bootRun
 ```
 
 ---
@@ -115,14 +128,27 @@ mvn spring-boot:run
 Por padrão, o projeto pode ser configurado para:
 
 * **H2 (memória)** – ideal para testes
+* **PostgreSQL (Azure)** – produção
 
-Configure em `application.yml` ou `application.properties`.
+> Configure o banco em `application.yml` ou `application.properties`.
 
 ---
 
-## 🧪 Testes
+## 🧪 Testes Unitários
 
-> (Opcional) Pode ser expandido com testes unitários usando JUnit e Mockito.
+O projeto possui testes unitários implementados com **JUnit 5**.
+
+Para rodar os testes com Gradle:
+
+```bash
+./gradlew test
+```
+
+> No Windows PowerShell, use:
+
+```powershell
+gradlew.bat test
+```
 
 ---
 
@@ -134,6 +160,7 @@ Configure em `application.yml` ou `application.properties`.
 * Uso de `ResponseEntity`
 * Documentação centralizada via interface (`ProductAPI`)
 * Padrão REST
+* Testes unitários para validação das regras de negócio
 
 ---
 
@@ -147,6 +174,5 @@ Desenvolvido por **Gustavo Alves**
 ## 📄 Licença
 
 Este projeto é apenas para fins educacionais.
-
 
 

@@ -3,8 +3,12 @@ name: Build and Deploy Spring Boot to Azure
 on:
   push:
     branches:
-      - main
       - master
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-deploy:
@@ -29,9 +33,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean bootJar
 
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: cadastro-produtos
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: build/libs/*.jar
